@@ -4,8 +4,8 @@
 #include "/home/codeleaded/System/Static/Library/HydraulicErosion.h"
 
 
-#define BUFFER_W    500
-#define BUFFER_H    500
+#define BUFFER_W    250
+#define BUFFER_H    250
 double* buffer = NULL;
 u64 iterations = 0;
 TransformedView tv;
@@ -14,17 +14,16 @@ void Setup(AlxWindow* w){
 	tv = TransformedView_Make(
 		(Vec2){ GetWidth(),GetHeight() },
 		(Vec2){ 0.0f,0.0f },
-		(Vec2){ 1.0f,1.0f },
+		(Vec2){ 0.01f,0.01f },
 		(float)GetWidth() / (float)GetHeight()
 	);
 
+    Random_Set(Time_Nano());
     PerlinNoise_Permutations_Init();
     AlxFont_Resize(&window.font,50,50);
 
     buffer = (double*)malloc(sizeof(double) * BUFFER_W * BUFFER_H);
     memset(buffer,0,sizeof(double) * BUFFER_W * BUFFER_H);
-
-    Random_Set(Time_Nano());
 
     PerlinNoise_Offset_Set(1);
     PerlinNoise_Persistance_Set(100.0f);
@@ -43,7 +42,21 @@ void Update(AlxWindow* w){
 	TransformedView_Output(&tv,(Vec2){ GetWidth(),GetHeight() });
 
     if(Stroke(ALX_KEY_SPACE).DOWN){
-        HydraulicErosion_2D_Iter(buffer,BUFFER_W,BUFFER_H,50,0.1,0.9,0.01);
+        //HydraulicErosion_2D_Iter(buffer,BUFFER_W,BUFFER_H,50,0.1,0.1,0.01,0.001);
+
+        // 50,0.5,0.01,0.1,0.1
+
+        // 50,0.5,0.1,0.1,0.1
+        // 100,0.5,0.1,0.1,0.1
+        
+        // 100,0.5,0.1,0.1,0.1
+
+        // iter:    cracling < 10, > 50 more flow
+        // minv:    very high (50 < v < 100): deep curly cuts
+        // a:       cut strength
+        // dt:      kristal cracling
+        // c:       curvature of layers and cuts
+        HydraulicErosion_2D_Iter(buffer,BUFFER_W,BUFFER_H,100,0.1,0.1,0.1,0.1);
     }
 
 	Clear(BLACK);
@@ -74,7 +87,7 @@ void Delete(AlxWindow* w){
 }
 
 int main(){
-    if(Create("HydraulicErosion",1800,1000,1,1,Setup,Update,Delete))
+    if(Create("Hydraulic Erosion",1800,1000,1,1,Setup,Update,Delete))
         Start();
     return 0;
 }
