@@ -4,8 +4,8 @@
 #include "/home/codeleaded/System/Static/Library/HydraulicErosion.h"
 
 
-#define BUFFER_W    250
-#define BUFFER_H    250
+#define BUFFER_W    1000
+#define BUFFER_H    1000
 double* buffer = NULL;
 u64 iterations = 0;
 TransformedView tv;
